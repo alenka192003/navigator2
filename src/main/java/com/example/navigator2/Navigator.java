@@ -5,7 +5,7 @@ public interface Navigator {
 
     Route removeRoute(String routeId);
 
-    boolean contains(Route route);
+    boolean contains(String route);
 
     int size();
 

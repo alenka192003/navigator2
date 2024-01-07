@@ -30,8 +30,8 @@ public class NavigatorImpl implements Navigator {
     }
 
     @Override
-    public boolean contains(Route route) {
-        return routes.contains(route.getId());
+    public boolean contains(String routeId) {
+        return routes.contains(routeId);
     }
 
     @Override
@@ -57,10 +57,7 @@ public class NavigatorImpl implements Navigator {
         return routes.values()
                 .stream()
                 .filter(route -> route.hasLogicalOrder(startPoint, endPoint))
-                .sorted(Comparator
-                        .comparingInt(Route::getLogicalOrderDistance)
-                        .thenComparingInt(Route::getPopularity)
-                        .reversed())
+                .sorted(new RouteComparator(startPoint, endPoint))
                 .collect(Collectors.toList());
     }
 
@@ -69,10 +66,7 @@ public class NavigatorImpl implements Navigator {
         return favoriteRoutes.values()
                 .stream()
                 .filter(route -> !route.getLocationPoints().get(0).equals(destinationPoint))
-                .sorted(Comparator
-                        .comparingDouble(Route::getDistance)
-                        .thenComparingInt(Route::getPopularity)
-                        .reversed())
+                .sorted(new RouteComparator("", ""))
                 .collect(Collectors.toList());
     }
 

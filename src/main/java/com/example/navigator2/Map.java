@@ -19,9 +19,8 @@ public class Map<K, V> {
         return hashtable.get(key);
     }
 
-    public Route remove(K key) {
-        hashtable.remove(key);
-        return null;
+    public V remove(K key) {
+        return hashtable.remove(key);
     }
 
     public int size() {
@@ -73,17 +72,19 @@ class Hashtable<K, V> {
         return null;
     }
 
-    public void remove(K key) {
+    public V remove(K key) {
         int index = getIndex(key);
         LinkedList<Entry<K, V>> bucket = buckets[index];
-        Iterator<Entry<K, V>> iterator = bucket.iterator();
-        while (iterator.hasNext()) {
-            Entry<K, V> entry = iterator.next();
+
+        // Ищем элемент в связном списке
+        for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
-                iterator.remove();
-                return;
+                bucket.remove(entry);  // Удаляем элемент из связного списка
+                return entry.getValue();  // Возвращаем удаленное значение
             }
         }
+
+        return null;  // Возвращаем null, если элемент не найден
     }
 
     public int size() {

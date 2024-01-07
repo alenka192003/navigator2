@@ -56,7 +56,7 @@ public class ConsoleNavigatorApp {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 9);
+        } while (choice != 11);
     }
 
     private static void printMenu() {
@@ -130,13 +130,10 @@ public class ConsoleNavigatorApp {
     }
 
     private static void checkContains() {
-        // Implement logic to check if a route exists
-        // You can take input from the user or use a predefined route
-        // For example:
-        Route routeToCheck = new Route();
-        routeToCheck.setId("R1");
+        System.out.print("Enter the route ID to check: ");
+        String routeId = new Scanner(System.in).nextLine();
 
-        boolean contains = navigator.contains(routeToCheck);
+        boolean contains = navigator.contains(routeId);
         System.out.println("Contains Route: " + contains);
     }
 
@@ -192,38 +189,48 @@ public class ConsoleNavigatorApp {
         System.out.println("Available Points: " + availablePoints);
     }
 
-    private static void exit() {
-        System.out.println("Exiting Navigation System. Goodbye!");
-    }
+    private static void exit() { System.out.println("Exiting Navigation System. Goodbye!");}
 
     private static void populateRoutes() {
+        // Создаем несколько маршрутов
         Route route1 = new Route();
         route1.setId("R1");
-        route1.setDistance(10.5);
-        route1.setPopularity(5);
+        route1.setDistance(450.0);  // Расстояние в километрах
+        route1.setPopularity(8);
         route1.setFavorite(true);
-        route1.setLocationPoints(Arrays.asList("Point A", "Point B", "Point X"));
 
         Route route2 = new Route();
         route2.setId("R2");
-        route2.setDistance(8.0);
-        route2.setPopularity(3);
+        route2.setDistance(300.0);
+        route2.setPopularity(5);
         route2.setFavorite(false);
-        route2.setLocationPoints(Arrays.asList("Point A", "Point C", "Point Y"));
 
         Route route3 = new Route();
         route3.setId("R3");
-        route3.setDistance(12.0);
-        route3.setPopularity(7);
+        route3.setDistance(700.0);
+        route3.setPopularity(9);
         route3.setFavorite(true);
-        route3.setLocationPoints(Arrays.asList("Point B", "Point C", "Point Z"));
 
+        Route route4 = new Route();
+        route4.setId("R4");
+        route4.setDistance(1000.0);
+        route4.setPopularity(9);
+        route4.setFavorite(true);
+
+        // Заполняем список местоположений для каждого маршрута
+        route1.setLocationPoints(Arrays.asList("New York", "Philadelphia", "Washington D.C."));
+        route4.setLocationPoints(Arrays.asList("New York", "Washington D.C."));
+        route2.setLocationPoints(Arrays.asList("New York", "Boston", "Portland"));
+        route3.setLocationPoints(Arrays.asList("Philadelphia", "Washington D.C.", "Richmond"));
+
+        // Используем метод navigator.addRoute(...) для добавления маршрута в объект navigator
         navigator.addRoute(route1);
         navigator.addRoute(route2);
         navigator.addRoute(route3);
+        navigator.addRoute(route4);
 
-        // Populate available points
-        availablePoints.addAll(Arrays.asList("Point A", "Point B", "Point C", "Point X", "Point Y", "Point Z"));
+        // Заполняем доступные точки на основе всех местоположений в маршрутах
+        availablePoints.addAll(Arrays.asList("New York", "Philadelphia", "Washington D.C.","Boston", "Portland","Richmond"));
     }
     private static void getFavoriteRoutesByDestination() {
         System.out.print("Enter the destination point: ");
@@ -245,123 +252,3 @@ public class ConsoleNavigatorApp {
         }
     }
 }
-
-/*import javafx.application.Application;
-        import javafx.collections.FXCollections;
-        import javafx.geometry.Insets;
-        import javafx.scene.Scene;
-        import javafx.scene.control.*;
-        import javafx.scene.layout.VBox;
-        import javafx.stage.Stage;
-
-        import java.util.*;
-
-public class NavigatorAppFX extends Application {
-
-    private static final Navigator navigator = new NavigatorImpl();
-    private static final Set<String> availablePoints = new HashSet<>();
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Navigation System");
-
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(10));
-
-        // Create buttons
-        Button addRouteButton = new Button("Add Route");
-        Button removeRouteButton = new Button("Remove Route");
-        Button checkContainsButton = new Button("Check if Route exists");
-        Button displaySizeButton = new Button("Display Number of Routes");
-        Button displayRouteButton = new Button("Display Route by ID");
-        Button chooseRouteButton = new Button("Choose Route");
-        Button searchRoutesButton = new Button("Search Routes");
-        Button displayPointsButton = new Button("Display Available Points");
-        Button exitButton = new Button("Exit");
-        Button favoriteRoutesButton = new Button("Get Favorite Routes by Destination");
-        Button top3RoutesButton = new Button("Get Top 3 Routes");
-
-        // Add button event handlers
-        addRouteButton.setOnAction(e -> addRoute());
-        removeRouteButton.setOnAction(e -> removeRoute());
-        checkContainsButton.setOnAction(e -> checkContains());
-        displaySizeButton.setOnAction(e -> displaySize());
-        displayRouteButton.setOnAction(e -> displayRouteById());
-        chooseRouteButton.setOnAction(e -> chooseRoute());
-        searchRoutesButton.setOnAction(e -> searchRoutes());
-        displayPointsButton.setOnAction(e -> displayAvailablePoints());
-        exitButton.setOnAction(e -> exit());
-        favoriteRoutesButton.setOnAction(e -> getFavoriteRoutesByDestination());
-        top3RoutesButton.setOnAction(e -> getTop3Routes());
-
-        // Add buttons to layout
-        layout.getChildren().addAll(
-                addRouteButton, removeRouteButton, checkContainsButton,
-                displaySizeButton, displayRouteButton, chooseRouteButton,
-                searchRoutesButton, displayPointsButton, exitButton,
-                favoriteRoutesButton, top3RoutesButton
-        );
-
-        Scene scene = new Scene(layout, 400, 500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    private void addRoute() {
-        // Create a new window for adding a route
-        Stage addRouteStage = new Stage();
-        addRouteStage.setTitle("Add Route");
-
-        VBox addRouteLayout = new VBox(10);
-        addRouteLayout.setPadding(new Insets(10));
-
-        // Create input fields
-        TextField routeIdField = new TextField();
-        TextField routePointsField = new TextField();
-        TextField distanceField = new TextField();
-        TextField popularityField = new TextField();
-        CheckBox favoriteCheckbox = new CheckBox("Is it a favorite route?");
-
-        // Add input fields to layout
-        addRouteLayout.getChildren().addAll(
-                new Label("Route ID:"), routeIdField,
-                new Label("Route Points (comma-separated):"), routePointsField,
-                new Label("Distance:"), distanceField,
-                new Label("Popularity:"), popularityField,
-                favoriteCheckbox
-        );
-
-        // Create and set add button
-        Button addButton = new Button("Add Route");
-        addButton.setOnAction(e -> {
-            // Retrieve values from input fields
-            String routeId = routeIdField.getText();
-            String[] routePoints = routePointsField.getText().split(",");
-            double distance = Double.parseDouble(distanceField.getText());
-            int popularity = Integer.parseInt(popularityField.getText());
-            boolean isFavorite = favoriteCheckbox.isSelected();
-
-            // Create and add the route
-            Route route = new Route();
-            route.setId(routeId);
-            route.setDistance(distance);
-            route.setPopularity(popularity);
-            route.setFavorite(isFavorite);
-            route.setLocationPoints(Arrays.asList(routePoints));
-
-            navigator.addRoute(route);
-            System.out.println("Route added successfully!");
-            addRouteStage.close(); // Close the add route window
-        });
-
-        // Add add button to layout
-        addRouteLayout.getChildren().add(addButton);
-
-        Scene addRouteScene = new Scene(addRouteLayout, 300, 300);
-        addRouteStage.setScene(addRouteScene);
-        addRouteStage.show();
-    }*/

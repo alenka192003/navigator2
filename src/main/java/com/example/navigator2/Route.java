@@ -91,6 +91,15 @@ public class Route {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, distance, popularity, isFavorite, locationPoints);
+        int result = 17; // Начальное значение, не равное 0
+
+        // Комбинируем хеш-коды полей, умножая результат на различные простые числа
+        result = 31 * result + id.hashCode();
+        result = 31 * result + Double.hashCode(distance);
+        result = 31 * result + Integer.hashCode(popularity);
+        result = 31 * result + Boolean.hashCode(isFavorite);
+        result = 31 * result + Objects.hash(locationPoints);
+
+        return result;
     }
 }

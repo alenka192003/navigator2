@@ -1,6 +1,5 @@
 package com.example.navigator2;
 
-import com.example.navigator2.Route;
 
 import java.util.*;
 
@@ -37,16 +36,19 @@ public class Map<K, V> {
 class Hashtable<K, V> {
     private LinkedList<Entry<K, V>>[] buckets;
     private static final int DEFAULT_CAPACITY = 16;
+    private static final double DEFAULT_LOAD_FACTOR = 0.75;
+    private int size;
+    private double loadFactor;
 
-    public Hashtable() {
-        this(DEFAULT_CAPACITY);
-    }
+    public Hashtable() {this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);}
 
-    public Hashtable(int capacity) {
+    public Hashtable(int capacity, double loadFactor) {
         this.buckets = new LinkedList[capacity];
         for (int i = 0; i < capacity; i++) {
             buckets[i] = new LinkedList<>();
         }
+        this.size = 0;
+        this.loadFactor = loadFactor;
     }
 
     public void put(K key, V value) {
@@ -59,6 +61,30 @@ class Hashtable<K, V> {
             }
         }
         bucket.add(new Entry<>(key, value));
+        size++;
+
+        // Check load factor and resize if needed
+        if ((double) size / buckets.length > loadFactor) {
+            resizeAndRehash();
+        }
+    }
+
+    private void resizeAndRehash() {
+        int newCapacity = buckets.length * 2;
+        LinkedList<Entry<K, V>>[] newBuckets = new LinkedList[newCapacity];
+        for (int i = 0; i < newCapacity; i++) {
+            newBuckets[i] = new LinkedList<>();
+        }
+
+        // Rehash existing elements
+        for (LinkedList<Entry<K, V>> bucket : buckets) {
+            for (Entry<K, V> entry : bucket) {
+                int newIndex = Math.abs(entry.getKey().hashCode() % newCapacity);
+                newBuckets[newIndex].add(entry);
+            }
+        }
+
+        buckets = newBuckets;
     }
 
     public V get(K key) {

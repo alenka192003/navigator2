@@ -34,62 +34,61 @@ public class Map<K, V> {
 }
 
 class Hashtable<K, V> {
-    private LinkedList<Entry<K, V>>[] buckets;
     private static final int DEFAULT_CAPACITY = 16;
-    private static final double DEFAULT_LOAD_FACTOR = 0.75;
+    private static final double LOAD_FACTOR_THRESHOLD = 0.5;
+    private MyList<Entry<K, V>>[] table;
     private int size;
-    private double loadFactor;
 
-    public Hashtable() {this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);}
+    public Hashtable() {
+        this(DEFAULT_CAPACITY);
+    }
 
-    public Hashtable(int capacity, double loadFactor) {
-        this.buckets = new LinkedList[capacity];
-        for (int i = 0; i < capacity; i++) {
-            buckets[i] = new LinkedList<>();
-        }
+    public Hashtable(int capacity) {
+        this.table = new MyList[capacity];
         this.size = 0;
-        this.loadFactor = loadFactor;
+        for (int i = 0; i < capacity; i++) {
+            table[i] = new MyList<>();
+        }
     }
 
     public void put(K key, V value) {
-        int index = getIndex(key);
-        LinkedList<Entry<K, V>> bucket = buckets[index];
+        if ((double) size / table.length >= LOAD_FACTOR_THRESHOLD) {
+            resizeAndRehash();
+        }
+
+        int index = findIndex(key);
+        MyList<Entry<K, V>> bucket = table[index];
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
                 return;
             }
         }
+
         bucket.add(new Entry<>(key, value));
         size++;
-
-        // Check load factor and resize if needed
-        if ((double) size / buckets.length > loadFactor) {
-            resizeAndRehash();
-        }
     }
 
     private void resizeAndRehash() {
-        int newCapacity = buckets.length * 2;
-        LinkedList<Entry<K, V>>[] newBuckets = new LinkedList[newCapacity];
+        int newCapacity = table.length * 2;
+        MyList<Entry<K, V>>[] newTable = new MyList[newCapacity];
         for (int i = 0; i < newCapacity; i++) {
-            newBuckets[i] = new LinkedList<>();
+            newTable[i] = new MyList<>();
         }
 
-        // Rehash existing elements
-        for (LinkedList<Entry<K, V>> bucket : buckets) {
+        for (MyList<Entry<K, V>> bucket : table) {
             for (Entry<K, V> entry : bucket) {
-                int newIndex = Math.abs(entry.getKey().hashCode() % newCapacity);
-                newBuckets[newIndex].add(entry);
+                int index = findIndex(entry.getKey(), newTable);
+                newTable[index].add(entry);
             }
         }
 
-        buckets = newBuckets;
+        table = newTable;
     }
 
     public V get(K key) {
-        int index = getIndex(key);
-        LinkedList<Entry<K, V>> bucket = buckets[index];
+        int index = findIndex(key);
+        MyList<Entry<K, V>> bucket = table[index];
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
@@ -99,37 +98,47 @@ class Hashtable<K, V> {
     }
 
     public V remove(K key) {
-        int index = getIndex(key);
-        LinkedList<Entry<K, V>> bucket = buckets[index];
-
-        // Ищем элемент в связном списке
+        int index = findIndex(key);
+        MyList<Entry<K, V>> bucket = table[index];
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
-                bucket.remove(entry);  // Удаляем элемент из связного списка
-                return entry.getValue();  // Возвращаем удаленное значение
+                bucket.remove(entry);
+                size--;
+                return entry.getValue();
             }
         }
-
-        return null;  // Возвращаем null, если элемент не найден
+        return null;
     }
 
     public int size() {
-        int count = 0;
-        for (LinkedList<Entry<K, V>> bucket : buckets) {
-            count += bucket.size();
-        }
-        return count;
+        return size;
     }
 
-    private int getIndex(K key) {
-        return Math.abs(key.hashCode() % buckets.length);
+    private int findIndex(K key) {
+        return findIndex(key, table);
+    }
+
+    private int findIndex(K key, MyList<Entry<K, V>>[] array) {
+        int index = Math.abs(key.hashCode()) % array.length;
+        int i = 1;
+        while (array[index].size() > 0) {
+            for (Entry<K, V> entry : array[index]) {
+                if (entry.getKey().equals(key)) {
+                    return index;
+                }
+            }
+            index = (index + i * i) % array.length;
+            i++;
+        }
+        return index;
     }
     public boolean containsKey(K key) {
         return get(key) != null;
     }
+
     public Collection<V> values() {
         List<V> allValues = new ArrayList<>();
-        for (LinkedList<Entry<K, V>> bucket : buckets) {
+        for (MyList<Entry<K, V>> bucket : table) {
             for (Entry<K, V> entry : bucket) {
                 allValues.add(entry.getValue());
             }
@@ -138,31 +147,29 @@ class Hashtable<K, V> {
     }
 }
 
+class Entry<K, V> {
+    private K key;
+    private V value;
 
-  class Entry<K, V> {
-        private K key;
-        private V value;
-
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
+    public Entry(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
+    public K getKey() {
+        return key;
+    }
 
-class LinkedList<T> implements Iterable<T> {
+    public V getValue() {
+        return value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+}
+
+class MyList<T> implements Iterable<T> {
     private Node<T> head;
     private int size;
 
@@ -211,13 +218,13 @@ class LinkedList<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new LinkedListIterator<>(head);
+        return new MyListIterator<>(head);
     }
 
-    private static class LinkedListIterator<T> implements Iterator<T> {
+    private static class MyListIterator<T> implements Iterator<T> {
         private Node<T> current;
 
-        public LinkedListIterator(Node<T> head) {
+        public MyListIterator(Node<T> head) {
             this.current = head;
         }
 
@@ -237,7 +244,6 @@ class LinkedList<T> implements Iterable<T> {
         }
     }
 }
-
 
 class Node<T> {
     private T data;

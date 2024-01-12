@@ -57,7 +57,7 @@ public class NavigatorImpl implements Navigator {
         return routes.values()
                 .stream()
                 .filter(route -> route.hasLogicalOrder(startPoint, endPoint))
-                .sorted(new RouteComparator(startPoint, endPoint))
+                .sorted(new CustomRouteComparator(startPoint, endPoint))
                 .collect(Collectors.toList());
     }
 

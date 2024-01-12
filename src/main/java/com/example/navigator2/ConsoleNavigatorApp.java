@@ -216,7 +216,7 @@ public class ConsoleNavigatorApp {
         route4.setId("R4");
         route4.setDistance(1000.0);
         route4.setPopularity(9);
-        route4.setFavorite(true);
+        route4.setFavorite(false);
 
         // Заполняем список местоположений для каждого маршрута
         route1.setLocationPoints(Arrays.asList("New York", "Philadelphia", "Washington D.C."));

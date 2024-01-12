@@ -35,7 +35,7 @@ public class Map<K, V> {
 
 class Hashtable<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
-    private static final double LOAD_FACTOR_THRESHOLD = 0.5;
+    private static final double LOAD_FACTOR = 0.5;
     private MyList<Entry<K, V>>[] table;
     private int size;
 
@@ -52,7 +52,7 @@ class Hashtable<K, V> {
     }
 
     public void put(K key, V value) {
-        if ((double) size / table.length >= LOAD_FACTOR_THRESHOLD) {
+        if ((double) size / table.length >= LOAD_FACTOR) {
             resizeAndRehash();
         }
 

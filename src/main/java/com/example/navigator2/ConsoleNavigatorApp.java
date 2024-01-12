@@ -144,19 +144,34 @@ public class ConsoleNavigatorApp {
     }
 
     private static void displayRouteById() {
-        // Implement logic to display a route by ID
-        // You can take input from the user or use a predefined route ID
-        // For example:
+        Scanner scanner = new Scanner(System.in);
+
         System.out.print("Enter the route ID to display: ");
-        String routeId = new Scanner(System.in).nextLine();
+        String routeId = scanner.nextLine();
 
         Route route = navigator.getRoute(routeId);
         if (route != null) {
             System.out.println("Route Details: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity());
+
+            // Предложим пользователю установить маршрут как избранный
+            System.out.print("Do you want to set this route as favorite? (yes/no): ");
+            String input = scanner.nextLine();
+
+            if ("yes".equalsIgnoreCase(input.trim())) {
+                System.out.print("Do you want to set this route as favorite? (true/false): ");
+
+                // Считываем введенное значение как boolean
+                boolean isFavorite = scanner.nextBoolean();
+                navigator.setFavorite(route.getId(),isFavorite);
+                System.out.println("Route set as new isFavorite.");
+            } else {
+                System.out.println("Route not changed");
+            }
         } else {
             System.out.println("Route not found!");
         }
     }
+
 
     private static void chooseRoute() {
         // Implement logic to choose a route
@@ -170,9 +185,6 @@ public class ConsoleNavigatorApp {
     }
 
     private static void searchRoutes() {
-        // Implement logic to search routes
-        // You can take input from the user or use predefined start and end points
-        // For example:
         System.out.print("Enter the starting point: ");
         String startPoint = new Scanner(System.in).nextLine();
 

@@ -65,7 +65,7 @@ public class NavigatorImpl implements Navigator {
     public Iterable<Route> getFavoriteRoutes(String destinationPoint) {
         return favoriteRoutes.values()
                 .stream()
-                .filter(route -> !route.getLocationPoints().get(0).equals(destinationPoint))
+                .filter(route -> route.isFavorite() && !route.getLocationPoints().get(0).equals(destinationPoint))
                 .sorted(new RouteComparator("", ""))
                 .collect(Collectors.toList());
     }
@@ -81,5 +81,17 @@ public class NavigatorImpl implements Navigator {
                         .thenComparingInt(route -> route.getLocationPoints().size()))
                 .limit(3)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setFavorite(String routeId, boolean isFavorite) {
+        Route route = routes.get(routeId);
+        if (route != null) {
+            System.out.println("Setting favorite for Route ID: " + routeId + " to " + isFavorite);
+            route.setFavorite(isFavorite);
+            favoriteRoutes.put(route.getId(), route);
+        } else {
+            System.out.println("Route not found!");
+        }
     }
 }

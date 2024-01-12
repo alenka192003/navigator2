@@ -18,4 +18,5 @@ public interface Navigator {
     Iterable<Route>getFavoriteRoutes(String destinationPoint);
 
     Iterable<Route>getTop3Routes();
+    void setFavorite(String routeId, boolean isFavorite);
 }

@@ -2,10 +2,6 @@ package com.example.navigator2;
 
 import java.util.Comparator;
 
-import java.util.Comparator;
-
-import java.util.Comparator;
-
 public class CustomRouteComparator implements Comparator<Route> {
     private String startPoint;
     private String endPoint;

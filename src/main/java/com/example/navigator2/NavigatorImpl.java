@@ -65,7 +65,7 @@ public class NavigatorImpl implements Navigator {
     public Iterable<Route> getFavoriteRoutes(String destinationPoint) {
         return favoriteRoutes.values()
                 .stream()
-                .filter(route -> route.isFavorite() && !route.getLocationPoints().get(0).equals(destinationPoint))
+                .filter(route -> route.isFavorite()&& route.getLocationPoints().indexOf(destinationPoint) > 0)
                 .sorted(new RouteComparator("", ""))
                 .collect(Collectors.toList());
     }
@@ -74,11 +74,7 @@ public class NavigatorImpl implements Navigator {
     public Iterable<Route> getTop3Routes() {
         return routes.values()
                 .stream()
-                .sorted(Comparator
-                        .comparingInt(Route::getPopularity)
-                        .reversed()
-                        .thenComparingDouble(Route::getDistance)
-                        .thenComparingInt(route -> route.getLocationPoints().size()))
+                .sorted(new RouteComparatorG3())
                 .limit(3)
                 .collect(Collectors.toList());
     }

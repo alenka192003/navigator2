@@ -6,7 +6,7 @@ import java.util.List;
 public class ConsoleNavigatorApp {
 
     private static final Navigator navigator = new NavigatorImpl();
-    private static final Set<String> availablePoints = new HashSet<>();
+    private static final List<String> availablePoints = new ArrayList<>();
 
     public static void main(String[] args) {
 

@@ -75,8 +75,12 @@ public class Route {
             return 0;
         }
 
-        return locationPoints.indexOf(locationPoints.get(1)) - locationPoints.indexOf(locationPoints.get(0));
+        int indexFirstPoint = locationPoints.indexOf(locationPoints.indexOf(0));
+        int indexSecondPoint = locationPoints.indexOf(locationPoints.indexOf(1));
+
+        return indexSecondPoint - indexFirstPoint;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

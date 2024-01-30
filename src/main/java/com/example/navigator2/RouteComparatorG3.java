@@ -3,7 +3,6 @@ package com.example.navigator2;
 import java.util.Comparator;
 
 public class RouteComparatorG3 implements Comparator<Route> {
-
     @Override
     public int compare(Route route1, Route route2) {
         // Сравнение по популярности (убывающий порядок)

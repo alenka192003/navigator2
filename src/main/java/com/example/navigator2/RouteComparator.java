@@ -3,17 +3,19 @@ package com.example.navigator2;
 import java.util.Comparator;
 
 public class RouteComparator implements Comparator<Route> {
-    private String startPoint;
-    private String endPoint;
+    private String destinationPoint;
 
-    public RouteComparator(String startPoint, String endPoint) {
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
+    public RouteComparator(String destinationPoint) {
+        this.destinationPoint = destinationPoint;
     }
 
     @Override
     public int compare(Route route1, Route route2) {
-        if (route1.hasLogicalOrder(startPoint, endPoint) && route2.hasLogicalOrder(startPoint, endPoint)) {
+        int indexOfDestination1 = route1.getLocationPoints().indexOf(destinationPoint);
+        int indexOfDestination2 = route2.getLocationPoints().indexOf(destinationPoint);
+
+        if (indexOfDestination1 > 0 && indexOfDestination2 > 0) {
+            // Если указанная точка не является начальной для обоих маршрутов
             int logicalOrderDistance1 = route1.getLogicalOrderDistance();
             int logicalOrderDistance2 = route2.getLogicalOrderDistance();
 

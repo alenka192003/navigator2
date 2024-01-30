@@ -14,12 +14,20 @@ public class NavigatorImpl implements Navigator {
 
     @Override
     public void addRoute(Route route) {
+        for (Route existingRoute : routes.values()) {
+            if (isSameRoute(existingRoute, route)) {
+                return;
+            }
+        }
         routes.put(route.getId(), route);
         if (route.isFavorite()) {
             favoriteRoutes.put(route.getId(), route);
         }
     }
-
+    private boolean isSameRoute(Route route1, Route route2) {
+        return Double.compare(route1.getDistance(), route2.getDistance()) == 0 &&
+                route1.getLocationPoints().equals(route2.getLocationPoints());
+    }
     @Override
     public Route removeRoute(String routeId) {
         Route removedRoute = routes.remove(routeId);
@@ -65,17 +73,18 @@ public class NavigatorImpl implements Navigator {
     public Iterable<Route> getFavoriteRoutes(String destinationPoint) {
         return favoriteRoutes.values()
                 .stream()
-                .filter(route -> route.isFavorite()&& route.getLocationPoints().indexOf(destinationPoint) > 0)
-                .sorted(new RouteComparator("", ""))
+                .filter(route -> route.isFavorite() && route.getLocationPoints().indexOf(destinationPoint) > 0)
+                .sorted(new RouteComparator(destinationPoint))
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public Iterable<Route> getTop3Routes() {
         return routes.values()
                 .stream()
                 .sorted(new RouteComparatorG3())
-                .limit(3)
+                .limit(5)
                 .collect(Collectors.toList());
     }
 

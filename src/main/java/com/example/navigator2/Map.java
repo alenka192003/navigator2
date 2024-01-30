@@ -64,7 +64,7 @@ class Hashtable<K, V> {
                 return;
             }
         }
-
+        System.out.println(new Entry<>(key, value).hashCode());
         bucket.add(new Entry<>(key, value));
         size++;
     }
@@ -100,15 +100,23 @@ class Hashtable<K, V> {
     public V remove(K key) {
         int index = findIndex(key);
         MyList<Entry<K, V>> bucket = table[index];
-        for (Entry<K, V> entry : bucket) {
+
+        // Итерируем по элементам корзины
+        Iterator<Entry<K, V>> iterator = bucket.iterator();
+        while (iterator.hasNext()) {
+            Entry<K, V> entry = iterator.next();
+
+            // Проверяем соответствие ключа
             if (entry.getKey().equals(key)) {
-                bucket.remove(entry);
+                iterator.remove(); // Используем метод iterator.remove() для безопасного удаления
                 size--;
                 return entry.getValue();
             }
         }
+
         return null;
     }
+
 
     public int size() {
         return size;

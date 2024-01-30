@@ -10,7 +10,7 @@ public class ConsoleNavigatorApp {
 
     public static void main(String[] args) {
 
-        populateRoutes(); // Populate sample routes
+        populateRoutes();
         Scanner scanner = new Scanner(System.in);
 
         int choice;
@@ -18,7 +18,7 @@ public class ConsoleNavigatorApp {
             printMenu();
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -46,13 +46,13 @@ public class ConsoleNavigatorApp {
                     displayAvailablePoints();
                     break;
                 case 9:
-                    exit();
-                    break;
-                case 10:
                     getFavoriteRoutesByDestination();
                     break;
-                case 11:
+                case 10:
                     getTop3Routes();
+                    break;
+                case 11:
+                    exit();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -70,23 +70,20 @@ public class ConsoleNavigatorApp {
         System.out.println("6. Choose Route");
         System.out.println("7. Search Routes");
         System.out.println("8. Display Available Points");
-        System.out.println("9. Exit");
-        System.out.println("10. Get Favorite Routes by Destination");
-        System.out.println("11. Get Top 3 Routes");
+        System.out.println("9. Get Favorite Routes by Destination");
+        System.out.println("10. Get Top 3 Routes");
+        System.out.println("11. Exit");
     }
 
     private static void addRoute() {
         Route route = new Route();
 
-        // Set route ID
         System.out.print("Enter route ID: ");
         String routeId = new Scanner(System.in).nextLine();
         route.setId(routeId);
 
-        // Display available points
         displayAvailablePoints();
 
-        // Take input for route points
         List<String> routePoints = new ArrayList<>();
         System.out.print("Enter route points (comma-separated, e.g., Point A, Point B): ");
         String pointsInput = new Scanner(System.in).nextLine();
@@ -96,8 +93,6 @@ public class ConsoleNavigatorApp {
             routePoints.add(trimmedPoint);
             availablePoints.add(trimmedPoint);
         }
-
-        // Set distance, popularity, and favorite
         System.out.print("Enter distance: ");
         double distance = new Scanner(System.in).nextDouble();
         route.setDistance(distance);
@@ -116,9 +111,6 @@ public class ConsoleNavigatorApp {
         System.out.println("Route added successfully!");
     }
     private static void removeRoute() {
-        // Implement logic to remove a route
-        // You can take input from the user or use a predefined route ID
-        // For example:
         System.out.print("Enter the route ID to remove: ");
         String routeId = new Scanner(System.in).nextLine();
 
@@ -153,8 +145,7 @@ public class ConsoleNavigatorApp {
         if (route != null) {
             System.out.println("Route Details: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity());
 
-            // Предложим пользователю установить маршрут как избранный
-            System.out.print("Do you want to set this route as favorite? (yes/no): ");
+            System.out.print("Do you want to change this route as favorite? (yes/no): ");
             String input = scanner.nextLine();
 
             if ("yes".equalsIgnoreCase(input.trim())) {
@@ -163,7 +154,7 @@ public class ConsoleNavigatorApp {
                 // Считываем введенное значение как boolean
                 boolean isFavorite = scanner.nextBoolean();
                 navigator.setFavorite(route.getId(),isFavorite);
-                System.out.println("Route set as new isFavorite.");
+                System.out.println("Route set as new position isFavorite.");
             } else {
                 System.out.println("Route not changed");
             }
@@ -174,9 +165,6 @@ public class ConsoleNavigatorApp {
 
 
     private static void chooseRoute() {
-        // Implement logic to choose a route
-        // You can take input from the user or use a predefined route ID
-        // For example:
         System.out.print("Enter the route ID to choose: ");
         String routeId = new Scanner(System.in).nextLine();
 
@@ -194,7 +182,7 @@ public class ConsoleNavigatorApp {
         Iterable<Route> routes = navigator.searchRoutes(startPoint, endPoint);
         System.out.println("Search Results:");
         for (Route route : routes) {
-            System.out.println("Route: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity());
+            System.out.println("Route: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity()+ ", Location Points: "+ route.getLocationPoints());
         }
     }
 
@@ -205,10 +193,9 @@ public class ConsoleNavigatorApp {
     private static void exit() { System.out.println("Exiting Navigation System. Goodbye!");}
 
     private static void populateRoutes() {
-        // Создаем несколько маршрутов
         Route route1 = new Route();
         route1.setId("R1");
-        route1.setDistance(450.0);  // Расстояние в километрах
+        route1.setDistance(450.0);
         route1.setPopularity(8);
         route1.setFavorite(true);
 
@@ -230,19 +217,16 @@ public class ConsoleNavigatorApp {
         route4.setPopularity(9);
         route4.setFavorite(false);
 
-        // Заполняем список местоположений для каждого маршрута
         route1.setLocationPoints(Arrays.asList("New York", "Philadelphia", "Washington D.C."));
         route4.setLocationPoints(Arrays.asList("New York", "Washington D.C."));
         route2.setLocationPoints(Arrays.asList("New York", "Boston", "Portland"));
         route3.setLocationPoints(Arrays.asList("Philadelphia", "Washington D.C.", "Richmond"));
 
-        // Используем метод navigator.addRoute(...) для добавления маршрута в объект navigator
         navigator.addRoute(route1);
         navigator.addRoute(route2);
         navigator.addRoute(route3);
         navigator.addRoute(route4);
 
-        // Заполняем доступные точки на основе всех местоположений в маршрутах
         availablePoints.addAll(Arrays.asList("New York", "Philadelphia", "Washington D.C.","Boston", "Portland","Richmond"));
     }
     private static void getFavoriteRoutesByDestination() {
@@ -261,7 +245,7 @@ public class ConsoleNavigatorApp {
     private static void displayRoutes(String title, Iterable<Route> routes) {
         System.out.println(title + ":");
         for (Route route : routes) {
-            System.out.println("Route: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity());
+            System.out.println("Route: " + route.getId() + ", Distance: " + route.getDistance() + ", Popularity: " + route.getPopularity()+ ", Location Points: "+ route.getLocationPoints());
         }
     }
 }

@@ -7,6 +7,7 @@ public class ConsoleNavigatorApp {
 
     private static final Navigator navigator = new NavigatorImpl();
     private static final List<String> availablePoints = new ArrayList<>();
+    //test
 
     public static void main(String[] args) {
 
